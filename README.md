@@ -1,22 +1,77 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+# JARVIS — AI ASSISTANT
+
+An intelligent real-time chat application powered by Groq API, built with Next.js and TypeScript. Jarvis delivers lightning-fast AI responses with support for image and file uploads.
+
+## Features
+
+- Real-time AI responses powered by Groq
+- Image upload and analysis
+- File upload and processing
+- Clean, minimal chat interface
+- Fully responsive design
+
+## Tech Stack
+
+- **Frontend:** Next.js, TypeScript, CSS
+- **Backend:** Next.js API Routes
+- **AI:** Groq API
+- **Language:** TypeScript
+
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- Groq API Key — get one free at [console.groq.com](https://console.groq.com)
+
+### Installation
+
+```bash
+git clone https://github.com/Decentkeshu/AI-Resume-Generator.git
+cd AI-Resume-Generator
+npm install
+```
+
+### Environment Variables
+
+Create a `.env.local` file in the root directory:
+
+```env
+GROQ_API_KEY=your_groq_api_key_here
+```
+
+### Run Locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## API Routes
+
+| Route | Method | Description |
+|-------|--------|-------------|
+| `/api/chat` | POST | Sends message and streams AI response |
+
+## Usage
+
+1. Open the app in your browser
+2. Type your message and hit Enter
+3. Upload an image or file using the attachment button
+4. Jarvis responds in real time
+
+## Screenshots
+
+> Coming soon
+
+## License
+
+MIT
+
+page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 

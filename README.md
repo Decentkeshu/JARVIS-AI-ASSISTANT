@@ -29,8 +29,8 @@ An intelligent real-time chat application powered by Groq API, built with Next.j
 ### Installation
 
 ```bash
-git clone https://github.com/Decentkeshu/AI-Resume-Generator.git
-cd AI-Resume-Generator
+git clone https://github.com/Decentkeshu/JARVIS-AI-ASSISTANT.git
+cd ai-chat-app
 npm install
 ```
 

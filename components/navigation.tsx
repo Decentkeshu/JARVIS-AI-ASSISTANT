@@ -1,79 +1,3 @@
-// 'use client'
-
-// import {
-//   SignInButton,
-//   SignUpButton,
-//   UserButton,
-//   Show,
-// } from "@clerk/nextjs";
-// import Link from "next/link";
-
-// export const Navigation = () => {
-//   return (
-//     <nav className="bg-[var(--background)] border-b border-[var(--foreground)]/10">
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//         <div className="flex justify-between h-16 items-center">
-//           <div className="flex-shrink-0">
-            
-//           </div>
-
-//           <div className="flex items-center gap-4">
-
-//             {/* Show when user is NOT logged in */}
-//             <Show when="signed-out">
-
-//               <nav className="navbar bg-body-tertiary">
-//   <form className="container-fluid justify-content-start">
-//     <button className="btn btn-outline-success me-2" type="button">
-//       <SignInButton mode="modal">
-//                 <button className="px-4 py-2 text-sm rounded-md border border-[var(--foreground)]/20 hover:bg-[var(--foreground)]/5 transition">
-//                   Sign In
-//                 </button>
-//               </SignInButton>
-
-//     </button>
-//     <button className="btn btn-sm btn-outline-secondary" type="button">
-
-//               <SignUpButton mode="modal">
-//                 <button className="px-4 py-2 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700 transition">
-//                   Sign Up
-//                 </button>
-//               </SignUpButton>
-
-//     </button>
-//   </form>
-// </nav>
-
-              
-
-//             </Show>
-
-//             {/* Show when user IS logged in */}
-//             <Show when="signed-in">
-              
-              
-//               <nav className="navbar bg-body-tertiary">
-//             <form className="container-fluid justify-content-start">
-//           <button className="btn btn-outline-success me-2" type="button">
-//             <Link href="/" className="text-xl font-semibold text-[var(--foreground)] home btn btn-danger">
-//               HOME
-//             </Link>
-//           </button>
-//         <button className="btn btn-sm btn-outline-secondary btn btn-success user" type="button">
-//           <UserButton afterSignOutUrl="/" />
-//         </button>
-//         </form>
-//           </nav>
-
-//             </Show>
-
-//           </div>
-//         </div>
-//       </div>
-//     </nav>
-//   );
-// };
-
 'use client'
 
 import { SignInButton, SignUpButton, UserButton, Show } from "@clerk/nextjs";
@@ -229,7 +153,7 @@ export const Navigation = () => {
             <Show when="signed-in">
               <Link href="/" className="nav-home-link">Home</Link>
               <div className="divider" />
-              <UserButton afterSignOutUrl="/" />
+              <UserButton />
             </Show>
 
           </div>

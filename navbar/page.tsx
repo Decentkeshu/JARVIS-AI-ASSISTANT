@@ -1,6 +1,6 @@
 "use client";
 import { usePathname } from "next/navigation";
-export default function Header({ontoggle}) {
+export default function Header({ ontoggle }: { ontoggle: () => void }) {
   const pathname = usePathname();
   return (
     <header style={{

@@ -204,7 +204,7 @@ html, body {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 80%;
-  border-top: none;
+  border : 1px solid #333;
   background: #111;
   border-radius: 12px;
 }
@@ -237,12 +237,12 @@ html, body {
 }
 .welcome {
   position: absolute;
-  top: 40%;
+  top: 37%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
   pointer-events: none; /* optional */
-  margin-bottom: 15px;
+  margin-bottom: 25px;
   padding: 10px;
   color: grey;
 }

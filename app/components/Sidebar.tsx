@@ -13,7 +13,7 @@ export default function Sidebar({ isopen }: { isopen: boolean }) {
   const [ismodalopen, setismodalopen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
-  // ✅ Load chats
+
   const loadChats = () => {
     const saved = JSON.parse(localStorage.getItem("chats") || "[]")
 
@@ -31,7 +31,7 @@ export default function Sidebar({ isopen }: { isopen: boolean }) {
     loadChats()
   }, [])
 
-  // Sync chats when localStorage changes
+
   useEffect(() => {
     const syncChats = () => loadChats()
 
@@ -46,7 +46,7 @@ export default function Sidebar({ isopen }: { isopen: boolean }) {
     }
   }, [])
 
-  // ✅ Create new chat
+
   const newchat = () => {
     const newChatObj = {
       id: Date.now().toString(),
@@ -64,7 +64,6 @@ export default function Sidebar({ isopen }: { isopen: boolean }) {
     router.push(`/chat/${newChatObj.id}`)
   }
 
-  // ✅ Delete chat
   const deleteChat = (id: string) => {
     const saved = JSON.parse(localStorage.getItem("chats") || "[]")
     const updated = saved.filter((chat: any) => chat.id !== id)

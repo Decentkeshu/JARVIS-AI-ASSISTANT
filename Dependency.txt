@@ -1,0 +1,9 @@
+                                Dependencies
+                                 
+  "next": "latest",
+  "react": "latest",
+  "react-dom": "latest"
+  "clerk" : "latest"
+  "bootstrap" : "latest"
+  "tailwindcss" : "latest"
+  "Api secrey key": "api key from any app (preferred groq)"

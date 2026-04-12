@@ -3,7 +3,7 @@ export default function Contacts() {
     <div className="flex justify-center p-8">
       <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-8 w-full max-w-md shadow-sm">
 
-        {/* Header */}
+       
         <div className="flex items-center gap-4 mb-6">
           <div className="w-14 h-14 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-700 dark:text-blue-300 font-medium text-lg flex-shrink-0">
             KK
@@ -14,10 +14,10 @@ export default function Contacts() {
           </div>
         </div>
 
-        {/* Divider */}
+       
         <div className="border-t border-zinc-100 dark:border-zinc-800 pt-5 flex flex-col gap-4">
 
-          {/* Email */}
+        
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0">
               ✉️
@@ -30,7 +30,7 @@ export default function Contacts() {
             </div>
           </div>
 
-          {/* GitHub */}
+      
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0">
               🐙
@@ -43,7 +43,7 @@ export default function Contacts() {
             </div>
           </div>
 
-          {/* LinkedIn */}
+        
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center flex-shrink-0">
               💼

@@ -149,7 +149,7 @@ export default function ChatInput() {
   return (
     <div className="chat-container">
 
-      {/* Messages Area */}
+     
       <div className="messages" ref={messagesRef}>
         {reply.map((msg: Message, i: number) => (
           <div key={i} className={`reply ${msg.sender}`}>
@@ -161,7 +161,7 @@ export default function ChatInput() {
         )}
       </div>
 
-      {/* Attachment Chips */}
+      
       {attachments.length > 0 && (
         <div className="attachments">
           {attachments.map((file: File, index: number) => (
@@ -176,14 +176,14 @@ export default function ChatInput() {
 
       <div className="welcome">{reply.length === 0 && <h1>Welcome To JARVIS</h1>}</div>
 
-      {/* Input Row */}
+      
       <div className={`input-row ${reply.length === 0 ? "centered" : ""}`}>
 
-        {/* + Button */}
+       
         <div className="menu-wrapper">
           <button className="plus-btn" onClick={() => setShowMenu(prev => !prev)}>+</button>
 
-          {/* Dropdown */}
+          
           {showMenu && (
             <>
               <div className="backdrop" onClick={() => setShowMenu(false)} />
@@ -201,11 +201,11 @@ export default function ChatInput() {
           )}
         </div>
 
-        {/* Hidden Inputs */}
+       
         <input ref={imageRef} type="file" accept="image/*" multiple hidden onChange={handleFileChange} />
         <input ref={fileRef} type="file" accept=".pdf,.doc,.docx,.txt" multiple hidden onChange={handleFileChange} />
 
-        {/* Text Input */}
+       
         <input
           type="text"
           className="text-input"
@@ -215,7 +215,7 @@ export default function ChatInput() {
           onKeyDown={(e) => { if (e.key === "Enter") handlesend() }}
         />
 
-        {/* Send Button */}
+       
         <button className="send-btn" onClick={handlesend}>↑</button>
 
       </div>

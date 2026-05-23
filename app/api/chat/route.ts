@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import {storechatserver} from "../../../services/chatservices";
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,10 +9,11 @@ export async function POST(req: NextRequest) {
     const files = formData.getAll("files") as File[]
 
     let fileContent = "";
-
+    let filename : string | null = null;
     if (files.length > 0) {
       try {
         const file = files[0];
+        filename= file.name;
         fileContent = await file.text();
       } catch {
         fileContent = "Could not read file";
@@ -42,11 +44,15 @@ export async function POST(req: NextRequest) {
     })
 
     const data = await res.json()
-
+    const reply = data.choices?.[0]?.message?.content || "No response"
+    const sessionId = formData.get("sessionId")as string;
+    await storechatserver(sessionId,message,reply,filename);
     return NextResponse.json({
-      reply: data.choices?.[0]?.message?.content || "No response"
-    })
+      reply
 
+     
+    })
+  
   } catch (error) {
     console.error(error)
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 })

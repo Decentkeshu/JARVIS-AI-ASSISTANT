@@ -39,15 +39,43 @@ export default function ChatInput() {
     }
   }, [reply])
 
-  useEffect(() => {
-    const saved: Chat[] = JSON.parse(localStorage.getItem("chats") || "[]");
-    const currentChat = saved.find((chat: Chat) => chat.id === id);
+  // useEffect(() => {
+  //   const saved: Chat[] = JSON.parse(localStorage.getItem("chats") || "[]");
+  //   const currentChat = saved.find((chat: Chat) => chat.id === id);
 
-    if (currentChat && currentChat.messages && currentChat.messages.length > 0) {
-      setreply(currentChat.messages);
-    } else {
-      setreply([]);
-    }
+  //   if (currentChat && currentChat.messages && currentChat.messages.length > 0) {
+  //     setreply(currentChat.messages);
+  //   } else {
+  //     setreply([]);
+  //   }
+  // }, [id]);
+
+
+  useEffect(() => {
+    const loadFromDB = async () => {
+      if (!id) return;
+
+      try {
+        const res = await fetch(`http://localhost:3001/api/chat/${id}`);
+        const data = await res.json();
+
+        if (data.success && data.chats.length > 0) {
+          // convert MongoDB format → your Message format
+          const messages = data.chats.flatMap((chat: any) => [
+            { sender: "user", text: chat.message },
+            { sender: "ai",   text: chat.reply   }
+          ]);
+          setreply(messages);
+        } else {
+          setreply([]);
+        }
+      } catch (error) {
+        console.log("Failed to load chat history:", error);
+        setreply([]);
+      }
+    };
+
+    loadFromDB();
   }, [id]);
 
   const navItems = [
@@ -80,6 +108,7 @@ export default function ChatInput() {
     setloading(true);
     const formdata = new FormData();
     formdata.append("message", message);
+    formdata.append("sessionId",id as string);
 
     attachments.forEach((file: File) => {
       formdata.append("files", file);

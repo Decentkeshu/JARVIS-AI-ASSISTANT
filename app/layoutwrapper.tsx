@@ -18,9 +18,9 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
 
   useEffect(() => {
     if (isProtectedPage) {
-      const userId = localStorage.getItem("userId"); // ✅ check if user is logged in
+      const userId = localStorage.getItem("userId"); 
       if (!userId) {
-        router.push("/signin"); // ✅ redirect if not logged in
+        router.push("/signin"); 
       }
     }
   }, [pathname]);

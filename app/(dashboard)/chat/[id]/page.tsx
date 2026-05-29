@@ -81,7 +81,8 @@ export default function ChatInput() {
 
     const formdata = new FormData();
     formdata.append("message", message);
-    formdata.append("sessionId", id as string);
+    const sessionId = id === "new" ? Date.now().toString() : id as string;
+    formdata.append("sessionId",sessionId);
     formdata.append("userId", localStorage.getItem("userId") || ""); // ✅ added
 
     attachments.forEach((file: File) => {

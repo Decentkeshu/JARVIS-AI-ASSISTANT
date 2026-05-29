@@ -3,18 +3,39 @@ const User = require('../models/usermodel');
 const { check, validationResult } = require('express-validator');
 
 exports.createchatdata = async(req, res, next) => {
-    const { sessionId, message, reply, fileName } = req.body;
-    const chatdata = new chatData({ sessionId, message, reply, fileName });
+    const { sessionId, message, reply, fileName, userId } = req.body; 
+    const chatdata = new chatData({ sessionId, message, reply, fileName, userId });
     await chatdata.save();
     res.status(201).json(chatdata);
 }
 
 exports.getchatdata = async(req, res, next) => {
     const { sessionId } = req.params;
-    const chats = await chatData.find({ sessionId });
+    const chats = await chatData.find({ sessionId }).sort({ createdAt: 1 });
     res.status(200).json({ success: true, chats });
 }
 
+
+exports.getsessions = async(req, res, next) => {
+    const { userId } = req.params;
+    const sessions = await chatData.aggregate([
+        { $match: { userId } },
+        { $sort: { createdAt: -1 } },
+        { $group: {
+            _id: "$sessionId",
+            lastMessage: { $first: "$message" },
+            createdAt: { $first: "$createdAt" }
+        }}
+    ]);
+    res.status(200).json({ success: true, sessions });
+}
+
+
+exports.deletesession = async(req, res, next) => {
+    const { sessionId } = req.params;
+    await chatData.deleteMany({ sessionId });
+    res.status(200).json({ success: true });
+}
 
 exports.userlogged = [
     check('user')
@@ -38,13 +59,10 @@ exports.userlogged = [
     }),
 
     async(req, res, next) => {
-        console.log("backend hit, req.body:", req.body);
         const errors = validationResult(req);
-
         if (!errors.isEmpty()) {
             return res.status(422).json({ errors: errors.array() });
         }
-
         const { user, email, password, cpassword } = req.body;
         const users = new User({ user, email, password, cpassword });
         await users.save();
@@ -53,14 +71,11 @@ exports.userlogged = [
 ];
 
 exports.loggeduser = async(req, res, next) => {
-    const { identifier, password } = req.body; 
-
-   
+    const { identifier, password } = req.body;
     const users = await User.findOne({
         $or: [{ user: identifier }, { email: identifier }],
         password: password
     });
-
     if (!users) return res.status(401).json({ message: "User not found." });
     res.status(200).json(users);
 }

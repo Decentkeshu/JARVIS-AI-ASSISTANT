@@ -1,7 +1,8 @@
 "use client"
 import { useState, useRef, useEffect } from "react"
 import { useParams, usePathname } from "next/navigation"
-import Link from "next/link"
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL; 
 
 interface Message {
   sender: string;
@@ -39,31 +40,19 @@ export default function ChatInput() {
     }
   }, [reply])
 
-  // useEffect(() => {
-  //   const saved: Chat[] = JSON.parse(localStorage.getItem("chats") || "[]");
-  //   const currentChat = saved.find((chat: Chat) => chat.id === id);
-
-  //   if (currentChat && currentChat.messages && currentChat.messages.length > 0) {
-  //     setreply(currentChat.messages);
-  //   } else {
-  //     setreply([]);
-  //   }
-  // }, [id]);
-
-
   useEffect(() => {
     const loadFromDB = async () => {
       if (!id) return;
 
       try {
-        const res = await fetch(`http://localhost:3001/api/chat/${id}`);
+     
+        const res = await fetch(`${BASE_URL}/api/chat/${id}`);
         const data = await res.json();
 
         if (data.success && data.chats.length > 0) {
-          // convert MongoDB format → your Message format
           const messages = data.chats.flatMap((chat: any) => [
             { sender: "user", text: chat.message },
-            { sender: "ai",   text: chat.reply   }
+            { sender: "ai",   text: chat.reply }
           ]);
           setreply(messages);
         } else {
@@ -77,19 +66,6 @@ export default function ChatInput() {
 
     loadFromDB();
   }, [id]);
-
-  const navItems = [
-    {
-      name: "Home",
-      href: "/",
-      active: pathname === "/" || pathname.startsWith("/sidebar")
-    },
-    {
-      name: "Sidebar",
-      href: "/sidebar",
-      active: pathname.startsWith("/sidebar")
-    }
-  ]
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -108,35 +84,34 @@ export default function ChatInput() {
     setloading(true);
     const formdata = new FormData();
     formdata.append("message", message);
-    formdata.append("sessionId",id as string);
+    formdata.append("sessionId", id as string);
 
     attachments.forEach((file: File) => {
       formdata.append("files", file);
     });
 
+  
+    setreply(prev => [...prev, { sender: "user", text: message }]);
+    
+    
     const saved: Chat[] = JSON.parse(localStorage.getItem("chats") || "[]");
-
     const updatedChats = saved.map((chat: Chat) => {
       if (chat.id === id) {
         return {
           ...chat,
-          title:
-            chat.title === "New Chat" && chat.messages.length === 0
-              ? message.slice(0, 30)
-              : chat.title,
-          messages: [
-            ...(chat.messages || []),
-            { sender: "user", text: message }
-          ]
+          title: chat.title === "New Chat" && chat.messages.length === 0
+            ? message.slice(0, 30)
+            : chat.title,
         };
       }
       return chat;
     });
-
     localStorage.setItem("chats", JSON.stringify(updatedChats));
     window.dispatchEvent(new Event("chatsUpdated"));
 
-    setreply(prev => [...prev, { sender: "user", text: message }]);
+    const currentMessage = message;
+    setmessage("");
+    setAttachments([]);
 
     try {
       const res = await fetch("/api/chat", {
@@ -146,39 +121,30 @@ export default function ChatInput() {
 
       const data = await res.json();
 
-      const savedAgain: Chat[] = JSON.parse(localStorage.getItem("chats") || "[]");
-
-      const updatedWithAI = savedAgain.map((chat: Chat) => {
-        if (chat.id === id) {
-          return {
-            ...chat,
-            messages: [
-              ...chat.messages,
-              { sender: "ai", text: data.reply }
-            ]
-          };
-        }
-        return chat;
+      
+      await fetch(`${BASE_URL}/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: id,
+          message: currentMessage,
+          reply: data.reply,
+          fileName: attachments[0]?.name || null
+        })
       });
-
-      localStorage.setItem("chats", JSON.stringify(updatedWithAI));
-      window.dispatchEvent(new Event("chatsUpdated"));
 
       setreply(prev => [...prev, { sender: "ai", text: data.reply }]);
 
     } catch (error: unknown) {
       console.log("Error:", error);
+      setreply(prev => [...prev, { sender: "ai", text: "Something went wrong. Please try again." }]);
     }
 
     setloading(false);
-    setmessage("");
-    setAttachments([]);
   };
 
   return (
     <div className="chat-container">
-
-     
       <div className="messages" ref={messagesRef}>
         {reply.map((msg: Message, i: number) => (
           <div key={i} className={`reply ${msg.sender}`}>
@@ -190,7 +156,6 @@ export default function ChatInput() {
         )}
       </div>
 
-      
       {attachments.length > 0 && (
         <div className="attachments">
           {attachments.map((file: File, index: number) => (
@@ -203,38 +168,27 @@ export default function ChatInput() {
         </div>
       )}
 
-      <div className="welcome">{reply.length === 0 && <h1 className="text-4xl font-bold text-white tracking-tight">Welcome To JARVIS</h1>}</div>
+      <div className="welcome">
+        {reply.length === 0 && <h1 className="text-4xl font-bold text-white tracking-tight">Welcome To JARVIS</h1>}
+      </div>
 
-      
       <div className={`input-row ${reply.length === 0 ? "centered" : ""}`}>
-
-       
         <div className="menu-wrapper">
           <button className="plus-btn" onClick={() => setShowMenu(prev => !prev)}>+</button>
-
-          
           {showMenu && (
             <>
               <div className="backdrop" onClick={() => setShowMenu(false)} />
               <div className="dropdown">
-                <div
-                  className="dropdown-item"
-                  onClick={() => { imageRef.current?.click(); setShowMenu(false) }}
-                >🖼️ Upload photo</div>
-                <div
-                  className="dropdown-item"
-                  onClick={() => { fileRef.current?.click(); setShowMenu(false) }}
-                >📄 Upload file</div>
+                <div className="dropdown-item" onClick={() => { imageRef.current?.click(); setShowMenu(false) }}>🖼️ Upload photo</div>
+                <div className="dropdown-item" onClick={() => { fileRef.current?.click(); setShowMenu(false) }}>📄 Upload file</div>
               </div>
             </>
           )}
         </div>
 
-       
         <input ref={imageRef} type="file" accept="image/*" multiple hidden onChange={handleFileChange} />
         <input ref={fileRef} type="file" accept=".pdf,.doc,.docx,.txt" multiple hidden onChange={handleFileChange} />
 
-       
         <input
           type="text"
           className="text-input"
@@ -244,9 +198,7 @@ export default function ChatInput() {
           onKeyDown={(e) => { if (e.key === "Enter") handlesend() }}
         />
 
-       
         <button className="send-btn" onClick={handlesend}>↑</button>
-
       </div>
     </div>
   )

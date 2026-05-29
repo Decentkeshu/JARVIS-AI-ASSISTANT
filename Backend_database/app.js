@@ -11,9 +11,13 @@ app.use(express.urlencoded({extended:true}));
 app.use("/api/chat",chatrouter);
 app.use("/api/user",userrouter);
 const PORT = 3001;
-mongoose.connect(db_path).then(()=>{
-    app.listen(PORT,()=>{
+mongoose.connect(process.env.MONGO_URI, {
+    tls: true,
+    tlsAllowInvalidCertificates: false,
+}).then(() => {
+    app.listen(PORT, () => {
         console.log(`The server is running at http://www.localhost:${PORT}`);
-
-    })
-})
+    });
+}).catch(err => {
+    console.log("DB error:", err.message);
+});

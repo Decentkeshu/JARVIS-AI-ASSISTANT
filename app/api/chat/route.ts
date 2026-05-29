@@ -1,19 +1,22 @@
 import { NextRequest, NextResponse } from "next/server"
-import {storechatserver} from "../../../services/chatservices";
+import { storechatserver } from "../../../services/chatservices";
 
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData()
 
     const message = formData.get("message") as string
+    const sessionId = formData.get("sessionId") as string
+    const userId = formData.get("userId") as string // ✅ added
     const files = formData.getAll("files") as File[]
 
     let fileContent = "";
-    let filename : string | null = null;
+    let filename: string | null = null;
+
     if (files.length > 0) {
       try {
         const file = files[0];
-        filename= file.name;
+        filename = file.name;
         fileContent = await file.text();
       } catch {
         fileContent = "Could not read file";
@@ -29,15 +32,15 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         model: "llama-3.1-8b-instant",
         messages: [
-          { role: "system", content: `You are a helpful assistant 
-             write in buitiful paragraph.
+          {
+            role: "system", content: `You are a helpful assistant 
+             write in beautiful paragraph.
              Every bullet points in new line.
-            `},
+            `
+          },
           {
             role: "user",
-            content:
-              message +
-              (fileContent ? `\n\nFile content:\n${fileContent}` : "")
+            content: message + (fileContent ? `\n\nFile content:\n${fileContent}` : "")
           }
         ],
       }),
@@ -45,14 +48,12 @@ export async function POST(req: NextRequest) {
 
     const data = await res.json()
     const reply = data.choices?.[0]?.message?.content || "No response"
-    const sessionId = formData.get("sessionId")as string;
-    await storechatserver(sessionId,message,reply,filename);
-    return NextResponse.json({
-      reply
 
-     
-    })
-  
+    // ✅ single save with userId — removed duplicate save from ChatInput.tsx
+    await storechatserver(sessionId, message, reply, filename, userId);
+
+    return NextResponse.json({ reply })
+
   } catch (error) {
     console.error(error)
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 })

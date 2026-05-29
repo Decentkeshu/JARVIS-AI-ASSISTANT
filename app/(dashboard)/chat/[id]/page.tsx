@@ -1,8 +1,8 @@
 "use client"
 import { useState, useRef, useEffect } from "react"
-import { useParams, usePathname } from "next/navigation"
+import { useParams } from "next/navigation"
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL; 
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface Message {
   sender: string;
@@ -25,7 +25,6 @@ export default function ChatInput() {
   const [loading, setloading] = useState<boolean>(false)
   const imageRef = useRef<HTMLInputElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
-  const pathname = usePathname()
   const messagesRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -40,19 +39,17 @@ export default function ChatInput() {
     }
   }, [reply])
 
+  // ✅ Load chat history from DB
   useEffect(() => {
     const loadFromDB = async () => {
       if (!id) return;
-
       try {
-     
         const res = await fetch(`${BASE_URL}/api/chat/${id}`);
         const data = await res.json();
-
         if (data.success && data.chats.length > 0) {
           const messages = data.chats.flatMap((chat: any) => [
             { sender: "user", text: chat.message },
-            { sender: "ai",   text: chat.reply }
+            { sender: "ai", text: chat.reply }
           ]);
           setreply(messages);
         } else {
@@ -63,7 +60,6 @@ export default function ChatInput() {
         setreply([]);
       }
     };
-
     loadFromDB();
   }, [id]);
 
@@ -82,32 +78,18 @@ export default function ChatInput() {
     if (!message.trim()) return;
 
     setloading(true);
+
     const formdata = new FormData();
     formdata.append("message", message);
     formdata.append("sessionId", id as string);
+    formdata.append("userId", localStorage.getItem("userId") || ""); // ✅ added
 
     attachments.forEach((file: File) => {
       formdata.append("files", file);
     });
 
-  
+    // ✅ Show user message immediately
     setreply(prev => [...prev, { sender: "user", text: message }]);
-    
-    
-    const saved: Chat[] = JSON.parse(localStorage.getItem("chats") || "[]");
-    const updatedChats = saved.map((chat: Chat) => {
-      if (chat.id === id) {
-        return {
-          ...chat,
-          title: chat.title === "New Chat" && chat.messages.length === 0
-            ? message.slice(0, 30)
-            : chat.title,
-        };
-      }
-      return chat;
-    });
-    localStorage.setItem("chats", JSON.stringify(updatedChats));
-    window.dispatchEvent(new Event("chatsUpdated"));
 
     const currentMessage = message;
     setmessage("");
@@ -121,19 +103,10 @@ export default function ChatInput() {
 
       const data = await res.json();
 
-      
-      await fetch(`${BASE_URL}/api/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sessionId: id,
-          message: currentMessage,
-          reply: data.reply,
-          fileName: attachments[0]?.name || null
-        })
-      });
-
       setreply(prev => [...prev, { sender: "ai", text: data.reply }]);
+
+      // ✅ Tell sidebar to refresh
+      window.dispatchEvent(new Event("chatsUpdated"));
 
     } catch (error: unknown) {
       console.log("Error:", error);
@@ -169,7 +142,9 @@ export default function ChatInput() {
       )}
 
       <div className="welcome">
-        {reply.length === 0 && <h1 className="text-4xl font-bold text-white tracking-tight">Welcome To JARVIS</h1>}
+        {reply.length === 0 && (
+          <h1 className="text-4xl font-bold text-white tracking-tight">Welcome To JARVIS</h1>
+        )}
       </div>
 
       <div className={`input-row ${reply.length === 0 ? "centered" : ""}`}>

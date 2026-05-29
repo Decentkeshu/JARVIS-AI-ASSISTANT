@@ -1,16 +1,32 @@
-const express  = require('express');
+require('dotenv').config();
+const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
-const db_path = "mongodb+srv://keshavkumar:Keshavkumar_123@keshav.9kshnyu.mongodb.net/Jarvis?appName=keshav";
 const cors = require('cors');
 const chatrouter = require('./routes/chatroute');
 const userrouter = require('./routes/userroute');
-app.use(cors());
+
+const PORT = process.env.PORT || 3001; 
+
+app.use(cors({
+    origin: [
+        "http://localhost:3000",
+        "https://jarvis-ai-assistant-opal.vercel.app" 
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+}));
+
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
-app.use("/api/chat",chatrouter);
-app.use("/api/user",userrouter);
-const PORT = 3001;
+app.use(express.urlencoded({ extended: true }));
+
+app.get("/", (req, res) => {
+    res.json({ message: "Backend is running" }); 
+});
+
+app.use("/api/chat", chatrouter);
+app.use("/api/user", userrouter);
+
 mongoose.connect(process.env.MONGO_URI, {
     tls: true,
     tlsAllowInvalidCertificates: false,

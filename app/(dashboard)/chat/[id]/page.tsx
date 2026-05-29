@@ -42,7 +42,7 @@ export default function ChatInput() {
   // ✅ Load chat history from DB
   useEffect(() => {
     const loadFromDB = async () => {
-      if (!id) return;
+     if (!id || id === "new") return;
       try {
         const res = await fetch(`${BASE_URL}/api/chat/${id}`);
         const data = await res.json();

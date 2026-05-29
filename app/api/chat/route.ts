@@ -9,6 +9,8 @@ export async function POST(req: NextRequest) {
     const sessionId = formData.get("sessionId") as string
     const userId = formData.get("userId") as string // ✅ added
     const files = formData.getAll("files") as File[]
+    console.log("userId:", userId);
+console.log("sessionId:", sessionId);
 
     let fileContent = "";
     let filename: string | null = null;

@@ -19,12 +19,15 @@ export default function Sidebar({ isopen }: { isopen: boolean }) {
     : null;
 
   const loadChats = async () => {
+     console.log("no userId found");
     if (!userId) return;
 
     try {
-     
+     console.log("fetching sessions for userId:", userId);
       const res = await fetch(`${BASE_URL}/api/chat/sessions/${userId}`);
+      console.log("sessions status:", res.status);
       const data = await res.json();
+      console.log("sessions data:", data);
 
       if (data.success && data.sessions.length > 0) {
         setchats(data.sessions); 
@@ -42,6 +45,8 @@ export default function Sidebar({ isopen }: { isopen: boolean }) {
   }, [])
 
   useEffect(() => {
+     const userId = localStorage.getItem("userId"); // ✅ get inside useEffect
+    console.log("userId:", userId); // ✅ check
     const syncChats = () => loadChats()
     window.addEventListener("chatsUpdated", syncChats)
     return () => window.removeEventListener("chatsUpdated", syncChats)

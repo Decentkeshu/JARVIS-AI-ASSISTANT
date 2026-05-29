@@ -49,10 +49,10 @@ export default function SignInPage() {
 
   return (
    
-   <div className="min-h-screen bg-gradient-to-r from-indigo-900 via-indigo-800 to-purple-900 flex ">
+   <div className="min-h-screen bg-gradient-to-br from-slate-950 via-gray-900 to-slate-900 flex">
 
     
-      <div className="hidden lg:flex w-1/2 flex-col justify-between p-16 relative overflow-hidden">
+      <div className="hidden lg:flex w-[45%] flex-col justify-between p-16 relative overflow-hidden">
 
       
         <div className="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] rounded-full bg-indigo-600/10 blur-3xl" />
@@ -60,7 +60,7 @@ export default function SignInPage() {
 
     
         <div className="flex items-center gap-3 relative z-10">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+          <div className="w-10 h-10 rounded-2xl   bg-gradient-to-br from-slate-950 via-gray-900 to-slate-900 flex items-center justify-center shadow-lg shadow-indigo-500/30">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
               <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
             </svg>
@@ -72,7 +72,7 @@ export default function SignInPage() {
         <div className="relative z-10">
           <h1 className="text-5xl font-bold text-white leading-tight mb-6">
             Your AI<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
+            <span className="text-transparent bg-clip-text  bg-gradient-to-br from-slate-950 via-gray-900 to-slate-900">
               Assistant
             </span>
           </h1>
@@ -99,12 +99,12 @@ export default function SignInPage() {
       <div className="hidden lg:block w-px bg-gradient-to-br from-indigo-500 to-purple-600x ml-5 p-5" />
 
      
-      <div className="w-full lg:w-1/2 flex items-center p-8 lg:p-16">
+      <div className="w-full lg:w-[55%] flex items-center justify-center p-8 lg:p-16">
       <div className="w-full px-6">
 
    
           <div className="flex lg:hidden  gap-3 mb-10">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center p-5">
+            <div className="w-10 h-10 rounded-2xl  bg-gradient-to-br from-slate-950 via-gray-900 to-slate-900 flex items-center justify-center p-5">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
                 <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
               </svg>

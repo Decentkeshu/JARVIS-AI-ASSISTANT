@@ -4,7 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from '@clerk/nextjs';
 import "./globals.css";
 import Navbar from "../navbar/page";
-import AppLayout from "./components/AppLayout";
+import AppLayout from "@/components/AppLayout";
 import { Navigation } from "@/components/navigation";
 import LayoutWrapper from "./layoutwrapper";
 // import { useState } from "react";

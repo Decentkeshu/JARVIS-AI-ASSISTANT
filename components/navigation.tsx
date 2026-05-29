@@ -2,8 +2,19 @@
 
 import { SignInButton, SignUpButton, UserButton, Show } from "@clerk/nextjs";
 import Link from "next/link";
+import { useState } from "react";
 
 export const Navigation = () => {
+  const [signedin,setsignedin] = useState(false);
+  const [isregistered,setisregistered] = useState(false);
+  const [form,setfrom] = useState({name : '',email : '',password:'',cpassword:''});
+
+  const handleSignIn = (e: React.FormEvent) => {
+    e.preventDefault();
+    // your auth logic here
+    console.log("Signing in with:", form);
+    setsignedin(false);
+  };
   return (
     <>
       <style>{`
@@ -130,33 +141,19 @@ export const Navigation = () => {
       <nav className="nav-root">
         <div className="nav-inner">
 
-          {/* Brand */}
+        
           <Link href="/" className="nav-brand">
             <div className="brand-icon"><img src="/jarvis.svg" alt="Jarvis Logo" width={100} height={40} /></div>
             <span className="brand-text">JARVIS</span>
           </Link>
 
-          {/* Auth Actions */}
-          <div className="nav-actions">
+           
+         <div className="nav-actions">
+  <Link href="/signin" className="btn-signup">SIGN IN</Link>
+ 
+  <Link href="/" className="btn-signon">Home</Link>
+</div>
 
-            {/* Signed Out: Show Sign In + Sign Up */}
-            <Show when="signed-out">
-              <SignInButton mode="modal">
-                <button className="btn-signin">Sign In</button>
-              </SignInButton>
-              <SignUpButton mode="modal">
-                <button className="btn-signup">Get Started →</button>
-              </SignUpButton>
-            </Show>
-
-            {/* Signed In: Show Home link + User avatar */}
-            <Show when="signed-in">
-              <Link href="/" className="nav-home-link">Home</Link>
-              <div className="divider" />
-              <UserButton />
-            </Show>
-
-          </div>
         </div>
       </nav>
     </>

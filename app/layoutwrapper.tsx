@@ -1,20 +1,29 @@
 "use client";
-
-import { usePathname } from "next/navigation";
-import AppLayout from "./components/AppLayout";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import AppLayout from "@/components/AppLayout";
 import { Navigation } from "@/components/navigation";
 
-export default function LayoutWrapper({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
 
   const isPublicPage =
     pathname === "/" ||
+    pathname === "/signin" ||
     pathname.includes("sign-in") ||
     pathname.includes("sign-up");
+
+  const isProtectedPage = pathname.startsWith("/chat");
+
+  useEffect(() => {
+    if (isProtectedPage) {
+      const userId = localStorage.getItem("userId"); // ✅ check if user is logged in
+      if (!userId) {
+        router.push("/signin"); // ✅ redirect if not logged in
+      }
+    }
+  }, [pathname]);
 
   if (isPublicPage) {
     return (

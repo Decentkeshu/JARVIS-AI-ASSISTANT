@@ -2,6 +2,8 @@
 import { useRouter, usePathname } from "next/navigation"
 import { useState, useEffect } from "react"
 import { IoTrashBinSharp } from "react-icons/io5"
+import { MdDeleteOutline } from "react-icons/md"
+import { AiOutlineDelete } from "react-icons/ai"
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -13,24 +15,14 @@ export default function Sidebar({ isopen }: { isopen: boolean }) {
   const [ismodalopen, setismodalopen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
-
-  const userId = typeof window !== "undefined" 
-    ? localStorage.getItem("userId") 
-    : null;
-
   const loadChats = async () => {
-     console.log("no userId found");
+    const userId = localStorage.getItem("userId"); // ✅ always get fresh from localStorage
     if (!userId) return;
-
     try {
-     console.log("fetching sessions for userId:", userId);
       const res = await fetch(`${BASE_URL}/api/chat/sessions/${userId}`);
-      console.log("sessions status:", res.status);
       const data = await res.json();
-      console.log("sessions data:", data);
-
       if (data.success && data.sessions.length > 0) {
-        setchats(data.sessions); 
+        setchats(data.sessions);
       } else {
         setchats([]);
       }
@@ -45,16 +37,23 @@ export default function Sidebar({ isopen }: { isopen: boolean }) {
   }, [])
 
   useEffect(() => {
-     const userId = localStorage.getItem("userId"); // ✅ get inside useEffect
-    console.log("userId:", userId); // ✅ check
     const syncChats = () => loadChats()
     window.addEventListener("chatsUpdated", syncChats)
     return () => window.removeEventListener("chatsUpdated", syncChats)
   }, [])
 
   const newchat = () => {
-    const newSessionId = Date.now().toString();
-    router.push(`/chat/${newSessionId}`)
+    router.push(`/chat/new`)
+  }
+
+  async function deleteChat(sessionId: string) {
+    try {
+      await fetch(`${BASE_URL}/api/chat/session/${sessionId}`, { method: "DELETE" });
+      await loadChats();
+      if (pathname === `/chat/${sessionId}`) router.push("/chat/new");
+    } catch (error) {
+      console.log("Delete failed:", error);
+    }
   }
 
   return (
@@ -94,23 +93,36 @@ export default function Sidebar({ isopen }: { isopen: boolean }) {
                   className="chats_12"
                   style={{
                     display: "flex",
+                    alignItems: "center",
                     justifyContent: "space-between",
                     padding: "6px",
                     borderRadius: "6px",
                     background: pathname === `/chat/${chat._id}` ? "#2a2a2a" : "transparent"
                   }}
                 >
+                  {/* Chat title */}
                   <span
                     onClick={() => router.push(`/chat/${chat._id}`)}
-                    style={{ cursor: "pointer", display: "flex" }}
+                    style={{ cursor: "pointer", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
                   >
-                    {chat.lastMessage?.length > 20 
-                      ? chat.lastMessage.slice(0, 20) + "..." 
+                    {chat.lastMessage?.length > 15
+                      ? chat.lastMessage.slice(0, 15) + "..."
                       : chat.lastMessage || "New Chat"}
                   </span>
-                  <IoTrashBinSharp
-                    onClick={() => deleteChat(chat._id)}
-                    style={{ cursor: "pointer", marginLeft: "15px" }}
+
+                  {/* ✅ delete icon on right side */}
+                  <AiOutlineDelete
+                    onClick={(e) => { e.stopPropagation(); deleteChat(chat._id); }}
+                    style={{
+                      cursor: "pointer",
+                      marginLeft: "8px",
+                      flexShrink: 0,
+                      fontSize: "16px",
+                      color: "#ef4444",
+                      opacity: 0.7,
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.opacity = "1")}
+                    onMouseLeave={e => (e.currentTarget.style.opacity = "0.7")}
                   />
                 </div>
               ))
@@ -146,11 +158,15 @@ export default function Sidebar({ isopen }: { isopen: boolean }) {
                   .map(chat => (
                     <div
                       key={chat._id}
-                      style={{ display: "flex", justifyContent: "space-between", cursor: "pointer" }}
+                      style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", padding: "6px 0" }}
                       onClick={() => { router.push(`/chat/${chat._id}`); setismodalopen(false) }}
                     >
                       {chat.lastMessage || "New Chat"}
-                      <IoTrashBinSharp onClick={(e) => { e.stopPropagation(); deleteChat(chat._id) }} />
+                      {/* ✅ delete icon in modal */}
+                      <AiOutlineDelete
+                        onClick={(e) => { e.stopPropagation(); deleteChat(chat._id) }}
+                        style={{ fontSize: "16px", color: "#ef4444" }}
+                      />
                     </div>
                   ))}
               </div>
@@ -161,14 +177,4 @@ export default function Sidebar({ isopen }: { isopen: boolean }) {
       </div>
     </div>
   )
-
-  async function deleteChat(sessionId: string) {
-    try {
-      await fetch(`${BASE_URL}/api/chat/session/${sessionId}`, { method: "DELETE" });
-      await loadChats(); // refresh sidebar
-      if (pathname === `/chat/${sessionId}`) router.push("/");
-    } catch (error) {
-      console.log("Delete failed:", error);
-    }
-  }
 }

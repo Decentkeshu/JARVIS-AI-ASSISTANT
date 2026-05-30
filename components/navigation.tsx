@@ -96,7 +96,7 @@ export const Navigation = () => {
         }
 
         .btn-signup {
-          background: linear-gradient(135deg, #6366f1, #a855f7);
+          // background: green-700;
           border: none;
           color: #fff;
           padding: 8px 20px;
@@ -108,6 +108,7 @@ export const Navigation = () => {
           transition: all 0.2s ease;
           letter-spacing: 0.01em;
           box-shadow: 0 0 20px rgba(99,102,241,0.3);
+
         }
 
         .btn-signup:hover {
@@ -149,7 +150,7 @@ export const Navigation = () => {
 
            
          <div className="nav-actions">
-  <Link href="/signin" className="btn-signup">SIGN IN</Link>
+  <Link href="/signin" className="btn-signup bg-green-800">SIGN IN</Link>
  
   <Link href="/" className="btn-signon">Home</Link>
 </div>

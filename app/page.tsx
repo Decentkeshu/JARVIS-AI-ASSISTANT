@@ -42,7 +42,7 @@ export default function Home() {
         </div>
       </nav> */}
 
-      {/* Hero */}
+     
       <main className="hero">
         <span className="badge"><img src="/jarvis.svg" alt="Jarvis Logo" width={150} height={70} /></span>
 

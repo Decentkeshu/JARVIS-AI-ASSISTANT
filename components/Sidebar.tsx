@@ -16,7 +16,7 @@ export default function Sidebar({ isopen }: { isopen: boolean }) {
   const [searchQuery, setSearchQuery] = useState("")
 
   const loadChats = async () => {
-    const userId = localStorage.getItem("userId"); // ✅ always get fresh from localStorage
+    const userId = localStorage.getItem("userId"); 
     if (!userId) return;
     try {
       const res = await fetch(`${BASE_URL}/api/chat/sessions/${userId}`);
@@ -100,7 +100,7 @@ export default function Sidebar({ isopen }: { isopen: boolean }) {
                     background: pathname === `/chat/${chat._id}` ? "#2a2a2a" : "transparent"
                   }}
                 >
-                  {/* Chat title */}
+               
                   <span
                     onClick={() => router.push(`/chat/${chat._id}`)}
                     style={{ cursor: "pointer", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
@@ -110,7 +110,7 @@ export default function Sidebar({ isopen }: { isopen: boolean }) {
                       : chat.lastMessage || "New Chat"}
                   </span>
 
-                  {/* ✅ delete icon on right side */}
+              
                   <AiOutlineDelete
                     onClick={(e) => { e.stopPropagation(); deleteChat(chat._id); }}
                     style={{
@@ -162,7 +162,7 @@ export default function Sidebar({ isopen }: { isopen: boolean }) {
                       onClick={() => { router.push(`/chat/${chat._id}`); setismodalopen(false) }}
                     >
                       {chat.lastMessage || "New Chat"}
-                      {/* ✅ delete icon in modal */}
+                     
                       <AiOutlineDelete
                         onClick={(e) => { e.stopPropagation(); deleteChat(chat._id) }}
                         style={{ fontSize: "16px", color: "#ef4444" }}

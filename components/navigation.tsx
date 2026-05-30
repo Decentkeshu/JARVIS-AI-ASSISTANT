@@ -3,8 +3,11 @@
 // import { SignInButton, SignUpButton, UserButton, Show } from "@clerk/nextjs";
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname,useRouter } from "next/navigation";
 
 export const Navigation = () => {
+  const pathname = usePathname();
+  const router = useRouter();
   const [signedin,setsignedin] = useState(false);
   const [isregistered,setisregistered] = useState(false);
   const [form,setfrom] = useState({name : '',email : '',password:'',cpassword:''});
@@ -150,7 +153,12 @@ export const Navigation = () => {
 
            
          <div className="nav-actions">
-  <Link href="/signin" className="btn-signup bg-green-800">SIGN IN</Link>
+ <button
+              onClick={() => router.push(pathname === "/signin" ? "/" : "/signin")}
+              className="btn-signup bg-green-800"
+            >
+              {pathname === "/signin" ? "CLOSE" : "SIGN IN"}
+            </button>
  
   <Link href="/" className="btn-signon">Home</Link>
 </div>

@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
 
     const message = formData.get("message") as string
     const sessionId = formData.get("sessionId") as string
-    const userId = formData.get("userId") as string // ✅ added
+    const userId = formData.get("userId") as string 
     const files = formData.getAll("files") as File[]
     console.log("userId:", userId);
 console.log("sessionId:", sessionId);
@@ -51,7 +51,7 @@ console.log("sessionId:", sessionId);
     const data = await res.json()
     const reply = data.choices?.[0]?.message?.content || "No response"
 
-    // ✅ single save with userId — removed duplicate save from ChatInput.tsx
+   
     await storechatserver(sessionId, message, reply, filename, userId);
 
     return NextResponse.json({ reply })

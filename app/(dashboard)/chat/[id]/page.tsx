@@ -39,7 +39,7 @@ export default function ChatInput() {
     }
   }, [reply])
 
-  // ✅ Load chat history from DB
+
   useEffect(() => {
     const loadFromDB = async () => {
      if (!id || id === "new") return;
@@ -83,13 +83,13 @@ export default function ChatInput() {
     formdata.append("message", message);
     const sessionId = id === "new" ? Date.now().toString() : id as string;
     formdata.append("sessionId",sessionId);
-    formdata.append("userId", localStorage.getItem("userId") || ""); // ✅ added
+    formdata.append("userId", localStorage.getItem("userId") || ""); 
 
     attachments.forEach((file: File) => {
       formdata.append("files", file);
     });
 
-    // ✅ Show user message immediately
+    
     setreply(prev => [...prev, { sender: "user", text: message }]);
 
     const currentMessage = message;
@@ -106,7 +106,7 @@ export default function ChatInput() {
 
       setreply(prev => [...prev, { sender: "ai", text: data.reply }]);
 
-      // ✅ Tell sidebar to refresh
+   
       window.dispatchEvent(new Event("chatsUpdated"));
 
     } catch (error: unknown) {

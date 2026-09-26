@@ -32,7 +32,7 @@ console.log("sessionId:", sessionId);
         Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "llama-3.1-8b-instant",
+        model: "openai/gpt-oss-20b",
         messages: [
           {
             role: "system", content: `You are a helpful assistant 
@@ -49,6 +49,7 @@ console.log("sessionId:", sessionId);
     })
 
     const data = await res.json()
+    console.log("Groq response:", JSON.stringify(data))
     const reply = data.choices?.[0]?.message?.content || "No response"
 
    

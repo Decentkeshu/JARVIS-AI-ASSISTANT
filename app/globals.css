@@ -23,7 +23,7 @@ html, body {
 
   height: 100vh;
   overflow: hidden;
-   /* navbar height */
+
   padding-top: 50px;
 }
 
@@ -116,7 +116,7 @@ html, body {
   margin-bottom: 20px;
 }
 
-/* Sidebar buttons only */
+
 .Sidebar button {
   display: block;
   margin-bottom: 12px;
@@ -143,7 +143,7 @@ html, body {
   flex-direction: column;
   position: relative;
   overflow : hidden;
-  /* padding-top: 50px; */
+ 
   height: 100%;
 
 }
@@ -175,7 +175,7 @@ html, body {
 
 
 .chat-container {
-  /* flex: 1; */
+ 
   display: flex;
   flex-direction: column;
   max-width: 900px;
@@ -194,8 +194,7 @@ html, body {
   padding: 20px;
   display: flex;
   flex-direction: column;
-  /* padding-top: 70px; */
-   /* max-height: calc(100vh - 50px - 60px); */
+ 
 }
 .messages:empty {
   flex: 1;
@@ -220,7 +219,7 @@ html, body {
   width: fit-content;
   max-width: 70%;
   line-height: 1.5;
-  /* margin-top: 60px; */
+
 }
 
 

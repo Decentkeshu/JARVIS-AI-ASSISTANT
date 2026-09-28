@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createuser, loggedinuser } from "@/services/chatservices";
+import { createuser, loggedinuser, verifyotp, resendotp } from "@/services/chatservices";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -12,8 +12,22 @@ export default function SignInPage() {
   const [loginwith, setLoginwith] = useState<"username" | "email">("username");
   const [loading, setLoading] = useState(false);
 
+ 
+  const [otpStep, setOtpStep] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpError, setOtpError] = useState("");
+  const [otpInfo, setOtpInfo] = useState("");
+
   const handlechange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const resetTabState = () => {
+    setErrors([]);
+    setLoginerror("");
+    setOtpStep(false);
+    setOtpError("");
+    setOtpInfo("");
   };
 
   const signeduser = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -25,9 +39,33 @@ export default function SignInPage() {
     if (status === 422) { setErrors(data.errors); return; }
     if (status === 200) {
       setErrors([]);
-      setisregistered(false);
-      setForm({ user: "", email: "", password: "", cpassword: "" });
+      setOtp("");
+      setOtpStep(true); 
+      return;
     }
+    setErrors([{ msg: data.message || "Signup failed. Please try again." }]);
+  };
+
+  const verifyuser = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    setOtpError("");
+    const { status, data } = await verifyotp(form.email, otp);
+    setLoading(false);
+    if (status === 200 && data._id) {
+      localStorage.setItem("userId", data._id);
+      router.push("/chat/new");
+    } else {
+      setOtpError(data.message || "Verification failed.");
+    }
+  };
+
+  const resendcode = async () => {
+    setOtpError("");
+    setOtpInfo("");
+    const { status, data } = await resendotp(form.email);
+    if (status === 200) setOtpInfo("A new code has been sent.");
+    else setOtpError(data.message || "Could not resend the code.");
   };
 
   const loginuser = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -41,32 +79,32 @@ export default function SignInPage() {
       localStorage.setItem("userId", result._id);
       router.push("/chat/new");
     } else {
-      setLoginerror("Invalid credentials. Please try again.");
+      setLoginerror(result.message || "Invalid credentials. Please try again.");
     }
   };
 
   const inputClass = "w-full px-5 py-4 bg-gray-700/50 border border-gray-600/50 rounded-2xl text-base text-white placeholder-gray-500 outline-none focus:border-indigo-400 focus:bg-gray-700 transition-all duration-200";
 
   return (
-    
+
     <div className="min-h-screen bg-gray-900 flex">
 
-     
+
       <div className="min-h-screen flex" style={{ background: "#0a0a0a" }}>
 
-     
+
        <div className="hidden lg:flex w-1/2 flex-col justify-between p-20 relative overflow-hidden" style={{ background: "#0a0a0a" }}>
         <div className="absolute bottom-[-100px] right-[-100px] w-[400px] h-[400px] rounded-full bg-purple-600/5 blur-3xl" />
 
-      
+
         <div className="flex items-center gap-3 relative z-10">
-         
+
              <div className="brand-icon"><img src="/jarvis.svg" alt="Jarvis Logo" width={100} height={40} /></div>
-        
+
           <span className="text-white font-bold text-2xl tracking-tight">JARVIS</span>
         </div>
 
-      
+
         <div className="relative z-10">
           <h1 className="text-6xl font-bold text-white leading-tight mb-6">
             Your AI<br />
@@ -78,7 +116,7 @@ export default function SignInPage() {
             Chat smarter, work faster. Jarvis is your intelligent companion for every task.
           </p>
 
-       
+
           <div className="flex flex-col gap-3 mt-12">
             {["⚡ Lightning fast responses", "🔒 Secure & private", "🧠 Context-aware AI"].map((f, i) => (
               <div key={i} className="flex items-center gap-3 bg-gray-800/50 border border-gray-700/50 rounded-2xl px-5 py-3 w-fit">
@@ -88,20 +126,20 @@ export default function SignInPage() {
           </div>
         </div>
 
-   
+
         <div className="relative z-10">
           <p className="text-gray-600 text-sm italic">"The best AI assistant I've ever used."</p>
           <p className="text-gray-700 text-xs mt-1">— Early access user</p>
         </div>
       </div>
 
-   
 
-     
+
+
      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-20" style={{ background: "#0a0a0a" }}>
         <div className="w-full max-w-lg">
 
-    
+
           <div className="flex lg:hidden items-center gap-3 mb-10">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-br bg-green-700 flex items-center justify-center">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
@@ -111,21 +149,21 @@ export default function SignInPage() {
             <span className="text-white font-bold text-2xl tracking-tight">JARVIS</span>
           </div>
 
-        
+
          <div className="rounded-3xl p-10" style={{ background: "#141414" }}>
 
-        
+
            <div className="flex rounded-2xl p-1.5 mb-8" style={{ background: "#0a0a0a" }}>
               <button
                 type="button"
-                onClick={() => { setisregistered(false); setErrors([]); setLoginerror(""); }}
+                onClick={() => { setisregistered(false); resetTabState(); }}
                 className={`flex-1 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${!isregistered ? "bg-green-800 text-white shadow-lg shadow-indigo-500/20" : "text-gray-400 hover:text-gray-200"}`}
               >
                 Log In
               </button>
               <button
                 type="button"
-                onClick={() => { setisregistered(true); setErrors([]); setLoginerror(""); }}
+                onClick={() => { setisregistered(true); resetTabState(); }}
                 className={`flex-1 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${isregistered ? "bg-green-800 text-white shadow-lg shadow-indigo-500/20" : "text-gray-400 hover:text-gray-200"}`}
               >
                 Sign Up
@@ -139,7 +177,7 @@ export default function SignInPage() {
                   <p className="text-gray-400">Sign in to continue to Jarvis</p>
                 </div>
 
-            
+
                 <div className="flex gap-2">
                   {(["username", "email"] as const).map((method) => (
                     <button
@@ -182,6 +220,44 @@ export default function SignInPage() {
                 >
                   {loading ? "Signing in..." : "Sign In →"}
                 </button>
+              </form>
+
+            ) : otpStep ? (
+              <form onSubmit={verifyuser} className="flex flex-col gap-6">
+                <div className="mb-2">
+                  <h2 className="text-3xl font-bold text-white mb-2">Verify your email</h2>
+                  <p className="text-gray-400">We sent a 6-digit code to {form.email}</p>
+                </div>
+
+                {otpError && (
+                  <div className="bg-red-500/10 border border-red-500/20 rounded-2xl px-5 py-4">
+                    <p className="text-red-400 text-sm">{otpError}</p>
+                  </div>
+                )}
+                {otpInfo && <p className="text-green-500 text-sm">{otpInfo}</p>}
+
+                <input
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                  inputMode="numeric"
+                  maxLength={6}
+                  placeholder="000000"
+                  required
+                  className={`${inputClass} text-center tracking-widest text-xl`}
+                />
+
+                <button
+                  type="submit"
+                  disabled={loading || otp.length !== 6}
+                  className="w-full py-4 bg-gradient-to-r bg-green-800 hover:bg-green-900 disabled:opacity-50 text-white text-base font-semibold rounded-2xl transition-all duration-200 shadow-lg shadow-indigo-500/20 hover:-translate-y-0.5 mt-2"
+                >
+                  {loading ? "Verifying..." : "Verify & Continue →"}
+                </button>
+
+                <div className="flex justify-between text-sm">
+                  <button type="button" onClick={resendcode} className="text-green-500 hover:text-green-400">Resend code</button>
+                  <button type="button" onClick={() => { setOtpStep(false); setOtpError(""); setOtpInfo(""); }} className="text-gray-500 hover:text-gray-300">Back</button>
+                </div>
               </form>
 
             ) : (
@@ -229,7 +305,7 @@ export default function SignInPage() {
                   disabled={loading}
                   className="w-full py-4 bg-gradient-to-r bg-green-800 hover:bg-green-900 disabled:opacity-50 text-white text-base font-semibold rounded-2xl transition-all duration-200 shadow-lg shadow-indigo-500/20 hover:-translate-y-0.5 mt-2"
                 >
-                  {loading ? "Creating account..." : "Create Account →"}
+                  {loading ? "Sending code..." : "Create Account →"}
                 </button>
               </form>
             )}

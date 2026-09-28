@@ -39,3 +39,23 @@ export const loggedinuser = async(identifier, password) => {
     });
     return response.json();
 }
+
+ export const verifyotp = async (email, otp) => {
+    const response = await fetch(`${BASE_URL}/api/user/verify-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp }),
+    });
+    const data = await response.json();
+    return { status: response.status, data };
+};
+
+export const resendotp = async (email) => {
+    const response = await fetch(`${BASE_URL}/api/user/resend-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+    });
+    const data = await response.json();
+    return { status: response.status, data };
+};
